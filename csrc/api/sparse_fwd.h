@@ -102,8 +102,8 @@ static std::vector<at::Tensor> sparse_attn_prefill_interface(
     const at::Tensor &q,
     const at::Tensor &kv,
     const at::Tensor &indices,
-    float sm_scale,
-    int d_v,
+    double sm_scale,
+    int64_t d_v,
     const std::optional<at::Tensor> &attn_sink,
     const std::optional<at::Tensor> &topk_length
 ) {

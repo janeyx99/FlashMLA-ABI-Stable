@@ -1,5 +1,41 @@
 # FlashMLA
 
+This fork is a LibTorch and CPython ABI stable version of the original FlashMLA. This means that you can build one wheel that suffices across Python 3.10+ and torch 2.13+ at runtime with a `pip install`. You can build and install it directly from GitHub; the cutlass submodule will be fetched automatically during the build:
+
+```zsh
+pip install -v --no-build-isolation "git+https://github.com/janeyx99/FlashMLA-ABI-Stable.git"
+```
+
+**Build prerequisites**
+- PyTorch **2.13+**
+    - Example command for cuda 13.2: `pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cu132`
+    - Note that the build time requirement is intentionally 2.13+ to access nicer UX features for the stable ABI. At runtime, the wheel will also work with torch 2.13+ regardless of build torch version.
+    - `--no-build-isolation` is required so the build can import your existing torch. 
+- A CUDA toolkit with `nvcc` **13.1+** for the updated CUDA kernels.
+- You will no longer need `torch_npu` for the Ascend build, but a compatible version is still needed at runtime.
+
+### Install from a local clone
+
+```zsh
+git clone https://github.com/janeyx99/FlashMLA-ABI-Stable.git
+cd FlashMLA-ABI-Stable
+git submodule update --init --recursive
+pip install -v --no-build-isolation .
+```
+
+### Test Results and Performance
+
+While this repo should produce ABI stable wheels for both CUDA and Ascend, I have only verified all tests pass for CUDA. **Ascend is unverified due to lack of hardware! Please reach out if you can help verify!** 
+
+Performance-wise, you should expect no changes to GPU runtime, but ~30-40us increased CPU overhead due to enrolling in the torch dispatcher as well as the cost of shimming libtorch APIs. For big kernels, this overhead is often hidden, but for smaller kernels like decode, I recommend using CUDAGraphs/graph capture in order to erase the overhead completely.
+
+### Previous stable versions
+
+For the pre-4.1 release stable FlashMLA, please see the `pre-4.1-main` branch: https://github.com/janeyx99/FlashMLA-ABI-Stable/tree/pre-4.1-main.
+
+
+Below is the original README with all the deets -- credits to the original authors from DeepSeek.
+
 > Breaking change notice (2026.09.30): In the 2026.09.30 release, we removed support for the Hopper architecture and for earlier models (including DeepSeek V3 / V3.2 / V4.0), and we changed the FP8 / FP4 KV cache format. This version is therefore not compatible with previous ones. If you need to run those models or use the old KV cache format, please switch to [this commit](https://github.com/deepseek-ai/FlashMLA/tree/ba89a3466e9470ad08ab39738d4e7bb66989e1e7).
 
 ## Introduction

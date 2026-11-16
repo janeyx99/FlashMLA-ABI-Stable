@@ -338,12 +338,12 @@ def main():
         python_requires=">=3.10",
         # The extensions are built against PyTorch's stable C++ ABI and hold no
         # symbols from libtorch's C++ one, so they keep working as torch moves
-        # forward -- hence >=, not the == that SGLang and sgl-kernel pin. The
-        # floor is the version SGLang builds against and the one CI tests; the
-        # real ABI floor is 2.10 (TORCH_TARGET_VERSION), but a 2.10 wheel is
-        # cu128 and does not carry the libcudart.so.13 these extensions link,
-        # which is a runtime requirement pip cannot express.
-        install_requires=["torch>=2.14.1"],
+        # forward. The C++ ABI floor is 2.10 (TORCH_TARGET_VERSION), while
+        # published CUDA 13 wheels require a CUDA 13 Torch runtime, available
+        # from 2.11 onward. Keep the package floor independent of SGLang's
+        # current serving-runtime pin; a CUDA 12 Torch wheel cannot supply
+        # libcudart.so.13, and pip cannot express that CUDA constraint.
+        install_requires=["torch>=2.11"],
         packages=find_packages(include=["flash_mla"]),
         package_data={"flash_mla": [VERSION_PATH.name]},
         ext_modules=ext_modules,

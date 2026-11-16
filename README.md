@@ -13,10 +13,10 @@ Upstream's documentation of the kernels themselves — KV cache formats, the `in
 ## Requirements
 
 - CUDA 13.1 and above. CUDA 13.2+ is recommended: it provides the native `cvt.rn.bf16x2` conversions the quantized decoding kernels use, and without them they fall back to a slower widening through FP32.
-- PyTorch 2.10 and above.
+- PyTorch 2.11 and above with a CUDA 13 runtime for CUDA wheels.
 - An SM100 / SM103 GPU for the current kernels; the frozen kernels additionally cover SM90.
 
-Wheels are built against PyTorch's stable C++ ABI and CPython's Limited API (`abi3`, CPython 3.10+), so one wheel serves every PyTorch 2.10+ and CPython 3.10+ combination, subject to the GPU architectures compiled into it.
+Wheels are built against PyTorch's stable C++ ABI and CPython's Limited API (`abi3`, CPython 3.10+). The C++ ABI target is 2.10; CUDA wheels require PyTorch 2.11+ built for CUDA 13 because they link `libcudart.so.13`. The same wheel can run on later CUDA 13 Torch releases, subject to the GPU architectures compiled into it.
 
 ## Installation
 
